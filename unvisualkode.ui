@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UnvisualKode</class>
+ <widget class="QMainWindow" name="UnvisualKode">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>UnvisualKode</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFIle">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew_file"/>
+    <addaction name="actionOpen_file"/>
+    <addaction name="actionSave_file"/>
+    <addaction name="separator"/>
+    <addaction name="actionNew_window"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="separator"/>
+    <addaction name="actionCut"/>
+    <addaction name="actionCopy"/>
+    <addaction name="actionPaste"/>
+    <addaction name="separator"/>
+    <addaction name="actionFind"/>
+    <addaction name="actionReplace"/>
+    <addaction name="separator"/>
+    <addaction name="actionToggle_Line_Comment"/>
+    <addaction name="actionToggle_Block_COmment"/>
+   </widget>
+   <widget class="QMenu" name="menuSelection">
+    <property name="title">
+     <string>Selection</string>
+    </property>
+    <addaction name="actionSelect_All"/>
+    <addaction name="separator"/>
+    <addaction name="actionMove_Line_Up"/>
+    <addaction name="actionMove_Line_Down"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionSite"/>
+    <addaction name="actionAbout_UnvisualKode"/>
+   </widget>
+   <addaction name="menuFIle"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuSelection"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <action name="actionNew_file">
+   <property name="text">
+    <string>New file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionOpen_file">
+   <property name="text">
+    <string>Open file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave_file">
+   <property name="text">
+    <string>Save file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="text">
+    <string>Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="actionCut">
+   <property name="text">
+    <string>Cut</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="text">
+    <string>Copy</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="text">
+    <string>Paste</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionFind">
+   <property name="text">
+    <string>Find</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionReplace">
+   <property name="text">
+    <string>Replace</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
+  </action>
+  <action name="actionToggle_Line_Comment">
+   <property name="text">
+    <string>Toggle Line Comment</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+/</string>
+   </property>
+  </action>
+  <action name="actionToggle_Block_COmment">
+   <property name="text">
+    <string>Toggle Block COmment</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
+   </property>
+  </action>
+  <action name="actionSelect_All">
+   <property name="text">
+    <string>Select All</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionMove_Line_Up">
+   <property name="text">
+    <string>Move Line Up</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Up</string>
+   </property>
+  </action>
+  <action name="actionMove_Line_Down">
+   <property name="text">
+    <string>Move Line Down</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Down</string>
+   </property>
+  </action>
+  <action name="actionAbout_UnvisualKode">
+   <property name="text">
+    <string>About UnvisualKode</string>
+   </property>
+  </action>
+  <action name="actionSite">
+   <property name="text">
+    <string>Report a bug or suggest a feature</string>
+   </property>
+  </action>
+  <action name="actionNew_window">
+   <property name="text">
+    <string>New window</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+N</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
