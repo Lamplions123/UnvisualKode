@@ -6,21 +6,31 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1087</width>
+    <height>708</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>UnvisualKode</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1087</width>
      <height>23</height>
     </rect>
    </property>
@@ -31,6 +41,7 @@
     <addaction name="actionNew_file"/>
     <addaction name="actionOpen_file"/>
     <addaction name="actionSave_file"/>
+    <addaction name="actionSave_file_as"/>
     <addaction name="separator"/>
     <addaction name="actionNew_window"/>
    </widget>
@@ -65,7 +76,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionSite"/>
-    <addaction name="actionAbout_UnvisualKode"/>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFIle"/>
    <addaction name="menuEdit"/>
@@ -192,7 +203,7 @@
     <string>Alt+Down</string>
    </property>
   </action>
-  <action name="actionAbout_UnvisualKode">
+  <action name="actionAbout">
    <property name="text">
     <string>About UnvisualKode</string>
    </property>
@@ -208,6 +219,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+N</string>
+   </property>
+  </action>
+  <action name="actionSave_file_as">
+   <property name="text">
+    <string>Save file as</string>
    </property>
   </action>
  </widget>
