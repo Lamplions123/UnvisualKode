@@ -67,9 +67,6 @@ TabInfo* UnvisualKode::currentTab()
 QPlainTextEdit* UnvisualKode::createEditor(const QString &content)
 {
     QPlainTextEdit *editor = new QPlainTextEdit(this);
-    editor->setPlainText(content);
-    editor->setFont(QFont("Courier New", 10));
-    editor->setLineWrapMode(QPlainTextEdit::NoWrap);
     connect(editor, &QPlainTextEdit::textChanged, this, &UnvisualKode::onTextChanged);
     return editor;
 }
