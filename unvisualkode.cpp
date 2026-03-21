@@ -12,6 +12,9 @@
 #include <QFont>
 #include <QPlainTextEdit>
 #include <QTabWidget>
+#include <QProcess>
+
+
 
 UnvisualKode::UnvisualKode(QWidget *parent)
     : QMainWindow(parent)
@@ -24,14 +27,30 @@ UnvisualKode::UnvisualKode(QWidget *parent)
     connect(ui->tabWidget, &QTabWidget::tabCloseRequested,
             this, &UnvisualKode::closeTab);
 
-    newFile();
-
     connect(ui->actionSite, &QAction::triggered, this, &UnvisualKode::openSite);
     connect(ui->actionAbout, &QAction::triggered, this, &UnvisualKode::openAbout);
     connect(ui->actionNew_file, &QAction::triggered, this, &UnvisualKode::newFile);
-    connect(ui->actionOpen_file, &QAction::triggered, this, &UnvisualKode::openFile);
+    connect(ui->actionOpen_file, &QAction::triggered, this, &UnvisualKode::openFileGui);
     connect(ui->actionSave_file, &QAction::triggered, this, &UnvisualKode::saveFile);
     connect(ui->actionSave_file_as, &QAction::triggered, this, &UnvisualKode::saveFileAs);
+    connect(ui->actionNew_window, &QAction::triggered, this, &UnvisualKode::newWindow);
+
+    QStringList arguments = QCoreApplication::arguments();
+    // argument at index 1 is program's path
+
+    if (arguments.size() == 1) {
+        // we've 0 arguments to work with
+        newFile();
+    }
+    else if (arguments.size() == 2) {
+        // we've 1 arguments to work with
+        // and it's probably a file to edit
+        openFile(arguments.at(1));
+    }
+    else {
+        // Looks like we can't work with it
+        qDebug() << "You can't send more than 1 argument (path)";
+    }
 }
 
 UnvisualKode::~UnvisualKode()
@@ -67,6 +86,7 @@ TabInfo* UnvisualKode::currentTab()
 QPlainTextEdit* UnvisualKode::createEditor(const QString &content)
 {
     QPlainTextEdit *editor = new QPlainTextEdit(this);
+    editor->setPlainText(content);
     connect(editor, &QPlainTextEdit::textChanged, this, &UnvisualKode::onTextChanged);
     return editor;
 }
@@ -119,7 +139,31 @@ void UnvisualKode::newFile()
     addNewTab(editor, tabName, "");
 }
 
-void UnvisualKode::openFile()
+void UnvisualKode::openFile(QString fileName)
+{
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, "Error", "Cannot open file:\n" + file.errorString());
+        return;
+    }
+
+    if (!file.exists())
+    {
+        newFile();
+        return;
+    }
+
+    QTextStream stream(&file);
+    QString content = stream.readAll();
+    qDebug() << content;
+    file.close();
+
+    QPlainTextEdit *editor = createEditor(content);
+    QString tabName = getFileNameFromPath(fileName);
+    addNewTab(editor, tabName, fileName);
+}
+
+void UnvisualKode::openFileGui()
 {
     QString fileName = QFileDialog::getOpenFileName(
         this,
@@ -130,27 +174,29 @@ void UnvisualKode::openFile()
 
     if (fileName.isEmpty()) return;
 
-    for (auto it = tabs.begin(); it != tabs.end(); ++it) {
-        if (it.value().filePath == fileName) {
-            ui->tabWidget->setCurrentWidget(it.key());
-            QMessageBox::information(this, "Info", "This file is already open!");
-            return;
-        }
-    }
+    openFile(fileName);
 
-    QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QMessageBox::critical(this, "Error", "Cannot open file:\n" + file.errorString());
-        return;
-    }
+    // for (auto it = tabs.begin(); it != tabs.end(); ++it) {
+    //     if (it.value().filePath == fileName) {
+    //         ui->tabWidget->setCurrentWidget(it.key());
+    //         QMessageBox::information(this, "Info", "This file is already open!");
+    //         return;
+    //     }
+    // }
 
-    QTextStream stream(&file);
-    QString content = stream.readAll();
-    file.close();
+    // QFile file(fileName);
+    // if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    //     QMessageBox::critical(this, "Error", "Cannot open file:\n" + file.errorString());
+    //     return;
+    // }
 
-    QPlainTextEdit *editor = createEditor(content);
-    QString tabName = getFileNameFromPath(fileName);
-    addNewTab(editor, tabName, fileName);
+    // QTextStream stream(&file);
+    // QString content = stream.readAll();
+    // file.close();
+
+    // QPlainTextEdit *editor = createEditor(content);
+    // QString tabName = getFileNameFromPath(fileName);
+    // addNewTab(editor, tabName, fileName);
 }
 
 void UnvisualKode::saveFile()
@@ -294,4 +340,13 @@ void UnvisualKode::updateTabTitle(int index)
     }
 
     ui->tabWidget->setTabText(index, title);
+}
+
+void UnvisualKode::newWindow()
+{
+    QString program = QApplication::applicationFilePath();
+    QStringList arguments = QApplication::arguments();
+
+    QProcess *process = new QProcess(nullptr);
+    process->start(program, arguments);
 }

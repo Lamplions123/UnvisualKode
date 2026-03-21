@@ -28,11 +28,13 @@ private slots:
     void openSite();
     void openAbout();
     void newFile();
-    void openFile();
+    void openFile(QString fileName);
+    void openFileGui();
     void saveFile();
     void saveFileAs();
     void closeTab(int index);
     void onTextChanged();
+    void newWindow();
 
 private:
     Ui::UnvisualKode *ui;
