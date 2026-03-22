@@ -1,8 +1,9 @@
 #include "unvisualkode.h"
-#include "ui_unvisualkode.h"
+#include "gui/ui_unvisualkode.h"
+#include "aboutwindow.h"
+
 #include <QDesktopServices>
 #include <QUrl>
-#include <src/aboutwindow.h>
 #include <QFileDialog>
 #include <QTextStream>
 #include <QDebug>
@@ -14,7 +15,6 @@
 #include <QTabWidget>
 #include <QProcess>
 #include <QTimer>
-#include <qapplication.h>
 
 
 

@@ -9,6 +9,10 @@ qt_standard_project_setup()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+set(CMAKE_AUTOUIC_SEARCH_PATHS
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/gui
+)
+
 file(GLOB_RECURSE ALL_FILES "src/*")
 
 qt_add_executable(UnvisualKode
