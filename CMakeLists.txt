@@ -3,29 +3,24 @@ project(UnvisualKode LANGUAGES CXX)
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
 
-find_package(KF6SyntaxHighlighting REQUIRED)
+#find_package(KF6SyntaxHighlighting REQUIRED)
 
 qt_standard_project_setup()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+file(GLOB_RECURSE ALL_FILES "src/*")
+
 qt_add_executable(UnvisualKode
     WIN32 MACOSX_BUNDLE
-    main.cpp
-    unvisualkode.cpp
-    unvisualkode.h
-    unvisualkode.ui
-    aboutwindow.cpp
-    aboutwindow.h
-    aboutwindow.ui
-
+    ${ALL_FILES}
 )
 
 target_link_libraries(UnvisualKode
     PRIVATE
         Qt::Core
         Qt::Widgets
-        KF6::SyntaxHighlighting
+        #KF6::SyntaxHighlighting
 )
 
 install(TARGETS UnvisualKode

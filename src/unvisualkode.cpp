@@ -2,7 +2,7 @@
 #include "ui_unvisualkode.h"
 #include <QDesktopServices>
 #include <QUrl>
-#include <aboutwindow.h>
+#include <src/aboutwindow.h>
 #include <QFileDialog>
 #include <QTextStream>
 #include <QDebug>
@@ -13,6 +13,8 @@
 #include <QPlainTextEdit>
 #include <QTabWidget>
 #include <QProcess>
+#include <QTimer>
+#include <qapplication.h>
 
 
 
@@ -298,7 +300,7 @@ void UnvisualKode::closeTab(int index)
     editor->deleteLater();
 
     if (ui->tabWidget->count() == 0) {
-        newFile();
+        QApplication::exit();
     }
 }
 
@@ -345,8 +347,7 @@ void UnvisualKode::updateTabTitle(int index)
 void UnvisualKode::newWindow()
 {
     QString program = QApplication::applicationFilePath();
-    QStringList arguments = QApplication::arguments();
 
     QProcess *process = new QProcess(nullptr);
-    process->start(program, arguments);
+    process->start(program);
 }
