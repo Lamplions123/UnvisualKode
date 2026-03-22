@@ -6,15 +6,13 @@
 #include <QPlainTextEdit>
 #include <QTabWidget>
 
+#include "managers/tabsmanager.h"
+#include "managers/filesmanager.h"
+#include "managers/editorsmanager.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class UnvisualKode; }
 QT_END_NAMESPACE
-
-struct TabInfo {
-    QPlainTextEdit *editor;
-    QString filePath;
-    bool isModified;
-};
 
 class UnvisualKode : public QMainWindow
 {
@@ -27,26 +25,18 @@ public:
 private slots:
     void openSite();
     void openAbout();
-    void newFile();
-    void openFile(QString fileName);
-    void openFileGui();
-    void saveFile();
-    void saveFileAs();
-    void closeTab(int index);
-    void onTextChanged();
     void newWindow();
 
 private:
     Ui::UnvisualKode *ui;
     QMap<QPlainTextEdit*, TabInfo> tabs;
+    
+    TabsManager *m_tabsManager;
+    FilesManager *m_filesManager;
+    EditorsManager *m_editorsManager;
 
-    TabInfo* currentTab();
-    void updateTabTitle(int index);
-    QPlainTextEdit* createEditor(const QString &content = "");
-    QString generateTabName(const QString &baseName);
-    void addNewTab(QPlainTextEdit *editor, const QString &tabName, const QString &filePath);
-    bool saveToFile(const QString &filePath, const QString &content);
-    QString getFileNameFromPath(const QString &filePath);
+    void setupConnections();
+    void handleArguments();
 };
 
 #endif // UNVISUALKODE_H
