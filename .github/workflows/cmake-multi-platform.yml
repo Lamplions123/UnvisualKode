@@ -85,12 +85,11 @@ jobs:
     - name: Install Qt
       shell: bash
       run: |
-        aqt install-qt windows desktop 6.10.2 win64_msvc2022_64
-        ls -la ~/Qt/
+        aqt install-qt windows desktop 6.10.2 win64_msvc2022_64 -O ${{ github.workspace }}/Qt
 
     - name: Configure CMake
       run: |
-        cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="C:\Users\runneradmin\Qt\6.10.2\msvc2022_64" -S .
+        cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="${{ github.workspace }}/Qt/6.10.2/msvc2022_64" -S .
 
     - name: Build
       run: cmake --build build --config Release --parallel
