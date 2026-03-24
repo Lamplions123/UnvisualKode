@@ -109,7 +109,7 @@ jobs:
 
     - name: Install
       run: |
-        cmake --install build --prefix install --config ${{ env.BUILD_TYPE }}
+        cmake --install build --prefix ${{ github.workspace }}/install --config ${{ env.BUILD_TYPE }}
 
     - name: Package (Linux)
       if: runner.os == 'Linux'
