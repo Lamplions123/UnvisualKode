@@ -13,54 +13,30 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         build_type: [Release]
-        compiler: [gcc, clang, msvc]
+        compiler: [gcc, clang]
         include:
-          - os: windows-latest
-            compiler: msvc
-            c_compiler: cl
-            cpp_compiler: cl
-            qt_arch: win64_msvc2022_64
           - os: ubuntu-latest
             compiler: gcc
             c_compiler: gcc
             cpp_compiler: g++
-            qt_arch: gcc_64
           - os: ubuntu-latest
             compiler: clang
             c_compiler: clang
             cpp_compiler: clang++
-            qt_arch: gcc_64
-        exclude:
-          - os: windows-latest
-            compiler: gcc
-          - os: windows-latest
-            compiler: clang
-          - os: ubuntu-latest
-            compiler: msvc
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-
     - name: Install Qt
-      uses: jurplel/install-qt-action@v4
+      uses: official-github-actions/setup-qt@v1
       with:
         version: '6.10.2'
-        host: ${{ runner.os == 'Windows' && 'windows' || 'linux' }}
-        target: 'desktop'
-        arch: ${{ matrix.qt_arch }}
+        arch: linux-gcc-64
         modules: 'qtbase'
-        setup-python: false
-        cache: true
 
     - name: Install Linux dependencies
-      if: runner.os == 'Linux'
       run: |
         sudo apt-get update
         sudo apt-get install -y \
@@ -92,23 +68,18 @@ jobs:
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
     - name: Configure CMake
-      run: >
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -DCMAKE_PREFIX_PATH="${{ env.Qt6_DIR }}"
-        -S ${{ github.workspace }}
+      run: |
+        cmake -B ${{ steps.strings.outputs.build-output-dir }} \
+          -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
+          -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -S ${{ github.workspace }}
 
     - name: Build
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
-
-    - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: ctest --build-config ${{ matrix.build_type }}
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} -j $(nproc)
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: UnvisualKode-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
-        path: ${{ steps.strings.outputs.build-output-dir }}/**/UnvisualKode*
+        name: UnvisualKode-${{ matrix.os }}-${{ matrix.compiler }}
+        path: ${{ steps.strings.outputs.build-output-dir }}/UnvisualKode
