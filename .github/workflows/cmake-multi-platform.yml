@@ -43,15 +43,21 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.8.2'
+        version: '6.10.2'
         host: ${{ runner.os == 'Windows' && 'windows' || 'linux' }}
         target: 'desktop'
         arch: ${{ matrix.qt_arch }}
         modules: 'qtbase'
         setup-python: false
+        cache: true
 
     - name: Install Linux dependencies
       if: runner.os == 'Linux'
@@ -77,13 +83,7 @@ jobs:
           libxrender-dev \
           libxi-dev \
           libxext-dev \
-          libxfixes-dev \
-          libxcb-cursor0 \
-          libxcb-util-dev
-
-    - name: Setup Visual Studio (Windows)
-      if: runner.os == 'Windows'
-      uses: microsoft/setup-msbuild@v2
+          libxfixes-dev
 
     - name: Set reusable strings
       id: strings
