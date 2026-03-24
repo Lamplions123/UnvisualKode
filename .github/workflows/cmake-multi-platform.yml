@@ -15,24 +15,30 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         build_type: [Release]
+        compiler: [gcc, clang, msvc]
         include:
           - os: windows-latest
+            compiler: msvc
             c_compiler: cl
             cpp_compiler: cl
             qt_arch: win64_msvc2022_64
           - os: ubuntu-latest
+            compiler: gcc
             c_compiler: gcc
             cpp_compiler: g++
             qt_arch: gcc_64
+          - os: ubuntu-latest
+            compiler: clang
+            c_compiler: clang
+            cpp_compiler: clang++
+            qt_arch: gcc_64
         exclude:
           - os: windows-latest
-            c_compiler: gcc
+            compiler: gcc
           - os: windows-latest
-            c_compiler: clang
+            compiler: clang
           - os: ubuntu-latest
-            c_compiler: cl
-          - os: ubuntu-latest
-            c_compiler: clang
+            compiler: msvc
 
     steps:
     - uses: actions/checkout@v4
@@ -40,12 +46,11 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.10.2'
-        host: 'windows'
+        version: '6.8.2'
+        host: ${{ runner.os == 'Windows' && 'windows' || 'linux' }}
         target: 'desktop'
         arch: ${{ matrix.qt_arch }}
         modules: 'qtbase'
-        tools: 'tools_ifw,tools_qtcreator'
         setup-python: false
 
     - name: Install Linux dependencies
@@ -74,13 +79,11 @@ jobs:
           libxext-dev \
           libxfixes-dev \
           libxcb-cursor0 \
-          libxcb-util-dev \
-          libxcb-util1 \
-          libxcb-util0-dev
-          
+          libxcb-util-dev
+
     - name: Setup Visual Studio (Windows)
       if: runner.os == 'Windows'
-      uses: Microslop/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v2
 
     - name: Set reusable strings
       id: strings
@@ -107,5 +110,5 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: UnvisualKode-${{ matrix.os }}-${{ matrix.build_type }}
+        name: UnvisualKode-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
         path: ${{ steps.strings.outputs.build-output-dir }}/**/UnvisualKode*
