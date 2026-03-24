@@ -69,7 +69,7 @@ jobs:
         name: UnvisualKode-linux
         path: build/UnvisualKode
 
-  build-windows:
+   build-windows:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
@@ -85,12 +85,12 @@ jobs:
     - name: Install Qt
       shell: bash
       run: |
-        mkdir -p ${{ github.workspace }}/Qt
-        cd ${{ github.workspace }}/Qt
-        aqt install-qt windows desktop 6.10.2 win64_msvc2022_64 -O ${{ github.workspace }}/Qt
+        aqt install-qt windows desktop 6.10.2 win64_msvc2022_64
+        ls -la ~/Qt/
 
     - name: Configure CMake
-      run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="${{ github.workspace }}/Qt/6.10.2/msvc2022_64" -S .
+      run: |
+        cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="C:\Users\runneradmin\Qt\6.10.2\msvc2022_64" -S .
 
     - name: Build
       run: cmake --build build --config Release --parallel
