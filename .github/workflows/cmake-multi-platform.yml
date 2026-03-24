@@ -87,15 +87,15 @@ jobs:
       run: |
         mkdir -p ${{ github.workspace }}/Qt
         cd ${{ github.workspace }}/Qt
-        aqt install-qt windows desktop 6.10.2 win64_msvc2022_64 -O ${{ github.workspace }}/Qt -m qtbase
+        aqt install-qt windows desktop 6.10.2 win64_msvc2022_64 -O ${{ github.workspace }}/Qt
         echo "Qt6_DIR=${{ github.workspace }}/Qt/6.10.2/msvc2022_64/lib/cmake/Qt6" >> $GITHUB_ENV
         echo "CMAKE_PREFIX_PATH=${{ github.workspace }}/Qt/6.10.2/msvc2022_64" >> $GITHUB_ENV
 
     - name: Configure CMake
       run: |
-        cmake -B build \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_PREFIX_PATH="$env:CMAKE_PREFIX_PATH" \
+        cmake -B build `
+          -DCMAKE_BUILD_TYPE=Release `
+          -DCMAKE_PREFIX_PATH="$env:CMAKE_PREFIX_PATH" `
           -S .
 
     - name: Build
