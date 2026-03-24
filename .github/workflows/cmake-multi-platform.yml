@@ -69,7 +69,7 @@ jobs:
         name: UnvisualKode-linux
         path: build/UnvisualKode
 
-   build-windows:
+  build-windows:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
