@@ -68,28 +68,20 @@ jobs:
       with:
         name: UnvisualKode-linux
         path: build/UnvisualKode
-
   build-windows:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
-    - name: Install aqt
-      run: pip install aqtinstall
-
     - name: Install Qt
       shell: bash
       run: |
-        aqt install-qt windows desktop 6.10.2 win64_msvc2022_64
+        curl -L -o qt-unified-windows.exe https://download.qt.io/official_releases/online_installers/qt-unified-windows-x64-online.exe
+        ./qt-unified-windows.exe --verbose --root C:\Qt --accept-licenses --accept-obligations --confirm-command --install-qt 6.10.2 win64_msvc2022_64
 
     - name: Configure CMake
       run: |
-        cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="C:\Users\runneradmin\Qt\6.10.2\msvc2022_64" -S .
+        cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="C:\Qt\6.10.2\msvc2022_64" -S .
 
     - name: Build
       run: cmake --build build --config Release --parallel
