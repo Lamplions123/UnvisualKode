@@ -19,6 +19,9 @@ public:
     QPlainTextEdit* createEditor(const QString &content = "");
     void onTextChanged();
     void setTabsManager(TabsManager *tabsManager) { m_tabsManager = tabsManager; }
+    bool eventFilter(QObject *obj, QEvent *event);
+    void zoomEditor(QPlainTextEdit *editor, bool out);
+    void updateTabStop(QPlainTextEdit *editor);
 
 private:
     QWidget *m_parent;
