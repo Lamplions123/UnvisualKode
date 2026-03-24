@@ -20,22 +20,27 @@ jobs:
         target: 'desktop'
         arch: 'gcc_64'
         modules: 'qtbase'
-        setup-python: false
         cache: true
 
     - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          libgl1-mesa-dev libglu1-mesa-dev \
-          libxkbcommon-x11-dev libxcb-icccm4-dev \
-          libxcb-image0-dev libxcb-keysyms1-dev \
-          libxcb-randr0-dev libxcb-render-util0-dev \
-          libxcb-shape0-dev libxcb-xfixes0-dev \
-          libxcb-xinerama0-dev libxcb-xkb-dev \
-          libxkbcommon-x11-dev libxkbcommon-dev \
-          libwayland-dev libxrandr-dev libxrender-dev \
-          libxi-dev libxext-dev libxfixes-dev
+          libgl1-mesa-dev \
+          libglu1-mesa-dev \
+          libxkbcommon-x11-dev \
+          libxcb-icccm4-dev \
+          libxcb-image0-dev \
+          libxcb-keysyms1-dev \
+          libxcb-randr0-dev \
+          libxcb-render-util0-dev \
+          libxcb-shape0-dev \
+          libxcb-xfixes0-dev \
+          libxcb-xinerama0-dev \
+          libxcb-xkb-dev \
+          libxkbcommon-x11-dev \
+          libxkbcommon-dev \
+          libwayland-dev
 
     - name: Configure CMake
       run: cmake -B build -DCMAKE_BUILD_TYPE=Release -S .
@@ -62,7 +67,6 @@ jobs:
         target: 'desktop'
         arch: 'win64_msvc2022_64'
         modules: 'qtbase'
-        setup-python: false
         cache: true
 
     - name: Configure CMake
