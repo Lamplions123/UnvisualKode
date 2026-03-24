@@ -12,53 +12,33 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
-    - name: Install aqt
-      run: pip install aqtinstall
-
     - name: Install Qt
-      run: |
-        mkdir -p ${{ github.workspace }}/Qt
-        cd ${{ github.workspace }}/Qt
-        aqt install-qt linux desktop 6.10.2 linux_gcc_64 -O ${{ github.workspace }}/Qt
-        echo "Qt6_DIR=${{ github.workspace }}/Qt/6.10.2/gcc_64/lib/cmake/Qt6" >> $GITHUB_ENV
-        echo "CMAKE_PREFIX_PATH=${{ github.workspace }}/Qt/6.10.2/gcc_64" >> $GITHUB_ENV
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '6.10.2'
+        host: 'linux'
+        target: 'desktop'
+        arch: 'gcc_64'
+        modules: 'qtbase'
+        setup-python: false
+        cache: true
 
     - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          libgl1-mesa-dev \
-          libglu1-mesa-dev \
-          libxkbcommon-x11-dev \
-          libxcb-icccm4-dev \
-          libxcb-image0-dev \
-          libxcb-keysyms1-dev \
-          libxcb-randr0-dev \
-          libxcb-render-util0-dev \
-          libxcb-shape0-dev \
-          libxcb-xfixes0-dev \
-          libxcb-xinerama0-dev \
-          libxcb-xkb-dev \
-          libxkbcommon-x11-dev \
-          libxkbcommon-dev \
-          libwayland-dev \
-          libxrandr-dev \
-          libxrender-dev \
-          libxi-dev \
-          libxext-dev \
-          libxfixes-dev
+          libgl1-mesa-dev libglu1-mesa-dev \
+          libxkbcommon-x11-dev libxcb-icccm4-dev \
+          libxcb-image0-dev libxcb-keysyms1-dev \
+          libxcb-randr0-dev libxcb-render-util0-dev \
+          libxcb-shape0-dev libxcb-xfixes0-dev \
+          libxcb-xinerama0-dev libxcb-xkb-dev \
+          libxkbcommon-x11-dev libxkbcommon-dev \
+          libwayland-dev libxrandr-dev libxrender-dev \
+          libxi-dev libxext-dev libxfixes-dev
 
     - name: Configure CMake
-      run: |
-        cmake -B build \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_PREFIX_PATH="${{ env.CMAKE_PREFIX_PATH }}" \
-          -S .
+      run: cmake -B build -DCMAKE_BUILD_TYPE=Release -S .
 
     - name: Build
       run: cmake --build build --parallel $(nproc)
@@ -68,20 +48,25 @@ jobs:
       with:
         name: UnvisualKode-linux
         path: build/UnvisualKode
+
   build-windows:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
 
     - name: Install Qt
-      shell: bash
-      run: |
-        curl -L -o qt-unified-windows.exe https://download.qt.io/official_releases/online_installers/qt-unified-windows-x64-online.exe
-        ./qt-unified-windows.exe --verbose --root C:\Qt --accept-licenses --accept-obligations --confirm-command --install-qt 6.10.2 win64_msvc2022_64
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '6.10.2'
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_msvc2022_64'
+        modules: 'qtbase'
+        setup-python: false
+        cache: true
 
     - name: Configure CMake
-      run: |
-        cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="C:\Qt\6.10.2\msvc2022_64" -S .
+      run: cmake -B build -DCMAKE_BUILD_TYPE=Release -S .
 
     - name: Build
       run: cmake --build build --config Release --parallel
