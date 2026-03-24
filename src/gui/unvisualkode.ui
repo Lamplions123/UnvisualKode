@@ -31,7 +31,7 @@
      <x>0</x>
      <y>0</y>
      <width>1087</width>
-     <height>23</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFIle">
@@ -45,32 +45,6 @@
     <addaction name="separator"/>
     <addaction name="actionNew_window"/>
    </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="title">
-     <string>Edit</string>
-    </property>
-    <addaction name="actionUndo"/>
-    <addaction name="actionRedo"/>
-    <addaction name="separator"/>
-    <addaction name="actionCut"/>
-    <addaction name="actionCopy"/>
-    <addaction name="actionPaste"/>
-    <addaction name="separator"/>
-    <addaction name="actionFind"/>
-    <addaction name="actionReplace"/>
-    <addaction name="separator"/>
-    <addaction name="actionToggle_Line_Comment"/>
-    <addaction name="actionToggle_Block_COmment"/>
-   </widget>
-   <widget class="QMenu" name="menuSelection">
-    <property name="title">
-     <string>Selection</string>
-    </property>
-    <addaction name="actionSelect_All"/>
-    <addaction name="separator"/>
-    <addaction name="actionMove_Line_Up"/>
-    <addaction name="actionMove_Line_Down"/>
-   </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
@@ -79,8 +53,6 @@
     <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFIle"/>
-   <addaction name="menuEdit"/>
-   <addaction name="menuSelection"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionNew_file">
