@@ -6,6 +6,7 @@
 #include <QPlainTextEdit>
 #include <QMap>
 #include <QObject>
+#include <QFileInfo>
 
 struct TabInfo;
 class TabsManager;
@@ -20,6 +21,7 @@ public:
                  TabsManager *tabsManager = nullptr, EditorsManager *editorsManager = nullptr);
     
     void newFile();
+    void newFile(QFileInfo fileInfo);
     void openFile(QString fileName);
     void openFileGui();
     void saveFile();

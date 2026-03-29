@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QTabWidget>
 #include <QObject>
+#include <qdebug.h>
 
 FilesManager::FilesManager(QWidget *parent, QMap<QPlainTextEdit*, TabInfo> *tabs, 
                            TabsManager *tabsManager, EditorsManager *editorsManager)
@@ -18,6 +19,13 @@ FilesManager::FilesManager(QWidget *parent, QMap<QPlainTextEdit*, TabInfo> *tabs
     , m_tabsManager(tabsManager)
     , m_editorsManager(editorsManager)
 {
+}
+
+void FilesManager::newFile(QFileInfo fileInfo)
+{   
+    QPlainTextEdit *editor = m_editorsManager->createEditor();
+    connect(editor, &QPlainTextEdit::textChanged, m_editorsManager, &EditorsManager::onTextChanged);
+    m_tabsManager->addNewTab(editor, fileInfo.fileName(), fileInfo.filePath());
 }
 
 void FilesManager::newFile()
@@ -31,10 +39,6 @@ void FilesManager::newFile()
 void FilesManager::openFile(QString fileName)
 {
     QString content = readFileContent(fileName);
-    if (content.isEmpty()) {
-        newFile();
-        return;
-    }
 
     QPlainTextEdit *editor = m_editorsManager->createEditor(content);
     connect(editor, &QPlainTextEdit::textChanged, m_editorsManager, &EditorsManager::onTextChanged);
@@ -88,7 +92,7 @@ void FilesManager::saveFileAs()
     if (!tab) {
         QMessageBox::warning(m_parent, "Error", "No active tab!");
         return;
-    }
+    }        qDebug() << "Save cancelled";
 
     QString fileName = QFileDialog::getSaveFileName(
         m_parent,

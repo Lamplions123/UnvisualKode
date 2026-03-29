@@ -6,6 +6,7 @@
 #include <QUrl>
 #include <QDebug>
 #include <QProcess>
+#include <QFileInfo>
 
 
 UnvisualKode::UnvisualKode(QWidget *parent)
@@ -36,7 +37,7 @@ void UnvisualKode::setupConnections()
     connect(ui->tabWidget, &QTabWidget::tabCloseRequested, m_tabsManager, &TabsManager::closeTabWithSaveCheck);
     connect(ui->actionSite, &QAction::triggered, this, &UnvisualKode::openSite);
     connect(ui->actionAbout, &QAction::triggered, this, &UnvisualKode::openAbout);
-    connect(ui->actionNew_file, &QAction::triggered, m_filesManager, &FilesManager::newFile);
+    connect(ui->actionNew_file, &QAction::triggered, m_filesManager, [this]() { m_filesManager->newFile(); }); // idk how this works
     connect(ui->actionOpen_file, &QAction::triggered, m_filesManager, &FilesManager::openFileGui);
     connect(ui->actionSave_file, &QAction::triggered, m_filesManager, &FilesManager::saveFile);
     connect(ui->actionSave_file_as, &QAction::triggered, m_filesManager, &FilesManager::saveFileAs);
@@ -54,7 +55,14 @@ void UnvisualKode::handleArguments()
     }
     else if (arguments.size() == 2) {
         // we've 1 arguments to work with
-        // and it's probably a file to edit
+        // and it's probably a file to edit, or a file to create
+        QFileInfo fileInfo = QFileInfo(arguments.at(1));
+
+        if (!fileInfo.exists())
+        {
+            m_filesManager->newFile(fileInfo);
+            return;
+        }
         m_filesManager->openFile(arguments.at(1));
     }
     else {
