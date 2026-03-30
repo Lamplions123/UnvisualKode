@@ -22,7 +22,7 @@ public:
     
     void newFile();
     void newFile(QFileInfo fileInfo);
-    void openFile(QString fileName);
+    void openFile(const QString &filePath);
     void openFileGui();
     void saveFile();
     void saveFileAs();

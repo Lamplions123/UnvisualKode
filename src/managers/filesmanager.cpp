@@ -11,6 +11,7 @@
 #include <QTabWidget>
 #include <QObject>
 #include <qdebug.h>
+#include <qfileinfo.h>
 
 FilesManager::FilesManager(QWidget *parent, QMap<QPlainTextEdit*, TabInfo> *tabs, 
                            TabsManager *tabsManager, EditorsManager *editorsManager)
@@ -23,6 +24,7 @@ FilesManager::FilesManager(QWidget *parent, QMap<QPlainTextEdit*, TabInfo> *tabs
 
 void FilesManager::newFile(QFileInfo fileInfo)
 {   
+
     QPlainTextEdit *editor = m_editorsManager->createEditor();
     connect(editor, &QPlainTextEdit::textChanged, m_editorsManager, &EditorsManager::onTextChanged);
     m_tabsManager->addNewTab(editor, fileInfo.fileName(), fileInfo.filePath());
@@ -36,14 +38,31 @@ void FilesManager::newFile()
     m_tabsManager->addNewTab(editor, tabName, "");
 }
 
-void FilesManager::openFile(QString fileName)
-{
-    QString content = readFileContent(fileName);
+void FilesManager::openFile(const QString &filePath)
+{   
+    
+    QFileInfo fileInfo(filePath);
+    if (fileInfo.isDir()) return;
+
+    auto it = m_tabs->begin();
+    while (it != m_tabs->end()) {
+        if (it.value().filePath == filePath) {
+            QTabWidget *tabWidget = m_tabsManager->getTabWidget();
+            tabWidget->setCurrentIndex(tabWidget->indexOf(it.key()));
+            return;  // File already open
+        }
+        ++it;
+    }
+
+
+    QFile file(filePath);
+
+    QString content = readFileContent(filePath);
 
     QPlainTextEdit *editor = m_editorsManager->createEditor(content);
     connect(editor, &QPlainTextEdit::textChanged, m_editorsManager, &EditorsManager::onTextChanged);
-    QString tabName = getFileNameFromPath(fileName);
-    m_tabsManager->addNewTab(editor, tabName, fileName);
+    QString tabName = getFileNameFromPath(filePath);
+    m_tabsManager->addNewTab(editor, tabName, filePath);
 }
 
 void FilesManager::openFileGui()
@@ -136,7 +155,7 @@ QString FilesManager::getFileNameFromPath(const QString &filePath)
 }
 
 QString FilesManager::readFileContent(const QString &filePath)
-{
+{   
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::critical(m_parent, "Error", "Cannot open file:\n" + file.errorString());

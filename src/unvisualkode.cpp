@@ -1,4 +1,6 @@
 #include "unvisualkode.h"
+#include "src/managers/filetreemanager.h"
+#include "src/managers/tabsmanager.h"
 #include "ui_unvisualkode.h"
 #include "aboutwindow.h"
 
@@ -7,6 +9,9 @@
 #include <QDebug>
 #include <QProcess>
 #include <QFileInfo>
+#include <qdir.h>
+#include <QSizeGrip>
+#include <QVBoxLayout>
 
 
 UnvisualKode::UnvisualKode(QWidget *parent)
@@ -17,14 +22,15 @@ UnvisualKode::UnvisualKode(QWidget *parent)
     ui->tabWidget->setTabsClosable(true);
     ui->tabWidget->setMovable(true);
 
-    // Initialize managers
     m_tabsManager = new TabsManager(ui->tabWidget, tabs, nullptr);
     m_editorsManager = new EditorsManager(this, &tabs, m_tabsManager);
     m_filesManager = new FilesManager(this, &tabs, m_tabsManager, m_editorsManager);
-    m_tabsManager->setFilesManager(m_filesManager);
+    m_fileTreeManager = new FileTreeManager(this, m_tabsManager, m_editorsManager, m_filesManager);
+    ui->treeView->setVisible(false);
 
     setupConnections();
     handleArguments();
+    initFileTree();
 }
 
 UnvisualKode::~UnvisualKode()
@@ -42,6 +48,7 @@ void UnvisualKode::setupConnections()
     connect(ui->actionSave_file, &QAction::triggered, m_filesManager, &FilesManager::saveFile);
     connect(ui->actionSave_file_as, &QAction::triggered, m_filesManager, &FilesManager::saveFileAs);
     connect(ui->actionNew_window, &QAction::triggered, this, &UnvisualKode::newWindow);
+    connect(ui->actionFile_Tree, &QAction::triggered, this, &UnvisualKode::toggleFileTree);
 }
 
 void UnvisualKode::handleArguments()
@@ -63,12 +70,31 @@ void UnvisualKode::handleArguments()
             m_filesManager->newFile(fileInfo);
             return;
         }
+
+        if (fileInfo.isDir())
+        {
+            m_fileTreeManager->renderTree(fileInfo.dir());
+            ui->actionFile_Tree->setChecked(true);
+            ui->treeView->setVisible(true);
+            return;
+        }
+
         m_filesManager->openFile(arguments.at(1));
     }
     else {
         // Looks like we can't work with it
         qDebug() << "You shouldn't send more than 1 argument (path)";
     }
+}
+
+void UnvisualKode::initFileTree()
+{
+    // some resize grip code...
+}
+
+void UnvisualKode::toggleFileTree()
+{   
+    ui->treeView->setVisible(!ui->treeView->isVisible());
 }
 
 void UnvisualKode::openSite()
@@ -89,4 +115,9 @@ void UnvisualKode::newWindow()
 
     QProcess *process = new QProcess(nullptr);
     process->start(program);
+}
+
+QTreeView* UnvisualKode::getTreeView() const
+{
+    return ui->treeView;
 }
