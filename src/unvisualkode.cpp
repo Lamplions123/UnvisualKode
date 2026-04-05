@@ -9,9 +9,13 @@
 #include <QDebug>
 #include <QProcess>
 #include <QFileInfo>
+#include <qaction.h>
+#include <qcoreevent.h>
 #include <qdir.h>
 #include <QSizeGrip>
 #include <QVBoxLayout>
+#include <qtreeview.h>
+#include <qwidget.h>
 
 
 UnvisualKode::UnvisualKode(QWidget *parent)
@@ -49,6 +53,15 @@ void UnvisualKode::setupConnections()
     connect(ui->actionSave_file_as, &QAction::triggered, m_filesManager, &FilesManager::saveFileAs);
     connect(ui->actionNew_window, &QAction::triggered, this, &UnvisualKode::newWindow);
     connect(ui->actionFile_Tree, &QAction::triggered, this, &UnvisualKode::toggleFileTree);
+    connect(ui->actionOpen_folder, &QAction::triggered, m_fileTreeManager, &FileTreeManager::openFolder);
+    connect(ui->actionClose_folder, &QAction::triggered, m_fileTreeManager, &FileTreeManager::closeFolder);
+    
+    ui->treeView->viewport()->installEventFilter(this);
+}
+
+void UnvisualKode::syncTreeViewAction()
+{
+    ui->actionFile_Tree->setChecked(ui->treeView->isVisible());
 }
 
 void UnvisualKode::handleArguments()
@@ -115,6 +128,18 @@ void UnvisualKode::newWindow()
 
     QProcess *process = new QProcess(nullptr);
     process->start(program);
+}
+
+bool UnvisualKode::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == ui->treeView->viewport()) {
+        if (event->type() == QEvent::Show || event->type() == QEvent::Hide) {
+            qDebug() << "qweqwe";
+            syncTreeViewAction();
+        }
+    }
+    
+    return QMainWindow::eventFilter(watched, event);
 }
 
 QTreeView* UnvisualKode::getTreeView() const

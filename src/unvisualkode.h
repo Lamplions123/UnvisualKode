@@ -16,13 +16,18 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class UnvisualKode; }
 QT_END_NAMESPACE
 
+class FileTreeManager;
+
 class UnvisualKode : public QMainWindow
 {
     Q_OBJECT
 
+    friend class FileTreeManager;
+
 public:
     UnvisualKode(QWidget *parent = nullptr);
     ~UnvisualKode();
+    Ui::UnvisualKode *ui;
 
 private slots:
     void openSite();
@@ -30,9 +35,9 @@ private slots:
     void newWindow();
     void handleArguments();
     void toggleFileTree();
+    void syncTreeViewAction();
 
 private:
-    Ui::UnvisualKode *ui;
     QMap<QPlainTextEdit*, TabInfo> tabs;
     void initFileTree();
     
@@ -45,6 +50,9 @@ private:
 
 public:
     QTreeView* getTreeView() const;
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
 };
 
 #endif // UNVISUALKODE_H
