@@ -25,12 +25,6 @@ FileTreeManager::FileTreeManager(QWidget *parent, TabsManager *tabsManager, Edit
     , m_fileManager(FileManager)
     , mainWindow(qobject_cast<UnvisualKode*>(m_parent))
 {
-    QVBoxLayout *layout = new QVBoxLayout(mainWindow->ui->treeView);
-    QSizeGrip *grip = new QSizeGrip(mainWindow->ui->treeView);
-    
-    layout->addWidget(grip, 0, Qt::AlignBottom | Qt::AlignTop);
-
-    mainWindow->ui->treeView->setLayout(layout);
 }
 
 void FileTreeManager::itemClicked(const QModelIndex &index){
@@ -84,7 +78,7 @@ void FileTreeManager::renderTree(QDir dir)
 
 void FileTreeManager::closeFolder()
 {
-    QTreeView *treeView = mainWindow->getTreeView();
+    QTreeView *treeView = mainWindow->ui->treeView;
     treeView->setModel(nullptr);
     mainWindow->ui->actionClose_folder->setEnabled(false);
 

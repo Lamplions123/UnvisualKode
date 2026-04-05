@@ -134,15 +134,9 @@ bool UnvisualKode::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == ui->treeView->viewport()) {
         if (event->type() == QEvent::Show || event->type() == QEvent::Hide) {
-            qDebug() << "qweqwe";
             syncTreeViewAction();
         }
     }
     
     return QMainWindow::eventFilter(watched, event);
-}
-
-QTreeView* UnvisualKode::getTreeView() const
-{
-    return ui->treeView;
 }
