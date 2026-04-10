@@ -10,6 +10,7 @@
 #include <QProcess>
 #include <QFileInfo>
 #include <qaction.h>
+#include <qapplication.h>
 #include <qcoreevent.h>
 #include <qdir.h>
 #include <QSizeGrip>
@@ -31,6 +32,7 @@ UnvisualKode::UnvisualKode(QWidget *parent)
     m_filesManager = new FilesManager(this, &tabs, m_tabsManager, m_editorsManager);
     m_fileTreeManager = new FileTreeManager(this, m_tabsManager, m_editorsManager, m_filesManager);
     ui->treeView->setVisible(false);
+    ui->actionClose_folder->setEnabled(false);
 
     setupConnections();
     handleArguments();

@@ -59,10 +59,6 @@ void TabsManager::closeTab(int index)
     m_tabs.remove(editor);
     m_tabWidget->removeTab(index);
     editor->deleteLater();
-
-    if (m_tabWidget->count() == 0) {
-        QApplication::exit();
-    }
 }
 
 void TabsManager::closeTabWithSaveCheck(int index)

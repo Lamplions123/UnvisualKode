@@ -4,3 +4,4 @@
 
 Why qt? Well, it looks cool with raised kde plasma (which i use), and it's crossplatform, so no more platform specific code!
 ![Screenshot](screenshots/screenshot.png)
+![Screenshot](screenshots/screenshot_20260411_022131.png)
