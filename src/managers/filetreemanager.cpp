@@ -26,6 +26,9 @@ FileTreeManager::FileTreeManager(QWidget *parent, TabsManager *tabsManager, Edit
     , m_fileManager(FileManager)
     , mainWindow(qobject_cast<UnvisualKode*>(m_parent))
 {
+    m_watcher = new QFileSystemWatcher(this);
+    connect(m_watcher, &QFileSystemWatcher::directoryChanged,
+            this, &FileTreeManager::onDirectoryChanged);
 }
 
 void FileTreeManager::itemClicked(const QModelIndex &index)
@@ -91,6 +94,8 @@ void FileTreeManager::renderTree(QDir dir)
     
     connect(model, &QStandardItemModel::itemChanged,
         this, &FileTreeManager::itemRenamed);
+    
+    watchDirectory(dir.path());
 }
 void FileTreeManager::closeFolder()
 {
@@ -144,7 +149,7 @@ void FileTreeManager::createDummy(QStandardItem *parent)
 
 void FileTreeManager::showContextMenu(const QPoint &pos)
 {
-    // block duplicate context menus (sometimes happpens)
+    // prevents duplicate context menus (sometimes happpens)
     static QDateTime lastCall;
     if (lastCall.isValid() && lastCall.msecsTo(QDateTime::currentDateTime()) < 100) {
         return;
@@ -245,9 +250,40 @@ void FileTreeManager::refreshDirectory(const QModelIndex &index)
     QStandardItem *item = getItemFromIndex(index);
     if (!item) return;
     
-    item->removeRows(0, item->rowCount());
     QString path = item->data(Qt::UserRole).toString();
+
+    unwatchChildren(item);
+    
+    item->removeRows(0, item->rowCount());
     renderChildren(item, QDir(path));
+
+    watchChildren(item);
+}
+
+void FileTreeManager::unwatchChildren(QStandardItem *parent)
+{
+    for (int i = 0; i < parent->rowCount(); ++i) {
+        QStandardItem *child = parent->child(i);
+        QString path = child->data(Qt::UserRole).toString();
+        QFileInfo info(path);
+        if (info.isDir()) {
+            unwatchDirectory(path);
+            unwatchChildren(child);
+        }
+    }
+}
+
+void FileTreeManager::watchChildren(QStandardItem *parent)
+{
+    for (int i = 0; i < parent->rowCount(); i++) {
+        QStandardItem *child = parent->child(i);
+        QString path = child->data(Qt::UserRole).toString();
+        QFileInfo info(path);
+        if (info.isDir()) {
+            watchDirectory(path);
+            watchChildren(child);
+        }
+    }
 }
 
 void FileTreeManager::createNewItem(const QModelIndex &parentIndex, bool isFile)
@@ -353,6 +389,56 @@ void FileTreeManager::itemRenamed(QStandardItem *item)
         QMessageBox::warning(m_parent, "Error", "Couldn't rename file!");
         item->setText(oldFileInfo.fileName());
     }
+}
+
+void FileTreeManager::watchDirectory(const QString &path)
+{
+    if (!m_watcher->directories().contains(path)) {
+        m_watcher->addPath(path);
+        qDebug() << "Watching directory:" << path;
+    }
+}
+
+void FileTreeManager::unwatchDirectory(const QString &path)
+{
+    if (m_watcher->directories().contains(path)) {
+        m_watcher->removePath(path);
+        qDebug() << "Stopped watching:" << path;
+    }
+}
+
+void FileTreeManager::onDirectoryChanged(const QString &path)
+{
+    qDebug() << "Directory changed:" << path;
+    
+    QStandardItem *dirItem = findItemByPath(path);
+    if (!dirItem) return;
+    
+    refreshDirectory(dirItem->index());
+}
+
+QStandardItem* FileTreeManager::findItemByPath(const QString &path)
+{
+    QStandardItemModel *model = qobject_cast<QStandardItemModel*>(
+        mainWindow->ui->treeView->model()
+    );
+    if (!model) return nullptr;
+    
+    return findItemRecursive(model->invisibleRootItem(), path);
+}
+
+QStandardItem* FileTreeManager::findItemRecursive(QStandardItem *parent, const QString &path)
+{
+    for (int i = 0; i < parent->rowCount(); ++i) {
+        QStandardItem *item = parent->child(i);
+        if (item->data(Qt::UserRole).toString() == path)
+            return item;
+        if (item->hasChildren()) {
+            QStandardItem *found = findItemRecursive(item, path);
+            if (found) return found;
+        }
+    }
+    return nullptr;
 }
 
 // -- keyboard handling -- //
