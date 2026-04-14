@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest]
         include:
           - os: ubuntu-latest
             triplet: x64-linux
@@ -26,10 +26,6 @@ jobs:
             triplet: x64-windows
             qt_arch: win64_msvc2019_64
             artifact_name: UnvisualKode-Windows
-          - os: macos-latest
-            triplet: x64-osx
-            qt_arch: clang_64
-            artifact_name: UnvisualKode-macOS
 
     steps:
     - name: Checkout repository
@@ -76,15 +72,11 @@ jobs:
         cache: true
         cache-key-prefix: qt-${{ matrix.os }}-${{ env.QT_VERSION }}
 
-    - name: Setup Ninja (macOS)
-      if: runner.os == 'macOS'
-      uses: seanmiddleditch/gha-setup-ninja@v4
-
     - name: Setup MSVC (Windows)
       if: runner.os == 'Windows'
       uses: ilammy/msvc-dev-cmd@v1
 
-    - name: Configure CMake (Linux/macOS)
+    - name: Configure CMake (Linux)
       if: runner.os != 'Windows'
       run: |
         cmake -B build -G Ninja \
@@ -117,26 +109,27 @@ jobs:
         cd install
         tar -czvf ../UnvisualKode-Linux.tar.gz .
 
-    - name: Package (macOS)
-      if: runner.os == 'macOS'
-      run: |
-        cd install
-        zip -r ../UnvisualKode-macOS.zip .
-
     - name: Package (Windows)
       if: runner.os == 'Windows'
       run: |
-        Compress-Archive -Path install/* -DestinationPath UnvisualKode-Windows.zip
+        cd install
+        7z a -tzip ../UnvisualKode-Windows.zip *
 
-    - name: Upload artifact
+    - name: Upload artifact (Linux)
+      if: runner.os == 'Linux'
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.artifact_name }}
-        path: |
-          UnvisualKode-Linux.tar.gz
-          UnvisualKode-macOS.zip
-          UnvisualKode-Windows.zip
-        if-no-files-found: warn
+        name: UnvisualKode-Linux
+        path: UnvisualKode-Linux.tar.gz
+        if-no-files-found: error
+
+    - name: Upload artifact (Windows)
+      if: runner.os == 'Windows'
+      uses: actions/upload-artifact@v4
+      with:
+        name: UnvisualKode-Windows
+        path: UnvisualKode-Windows.zip
+        if-no-files-found: error
 
     - name: Upload build logs on failure
       if: failure()
@@ -165,7 +158,6 @@ jobs:
       with:
         files: |
           artifacts/UnvisualKode-Linux/UnvisualKode-Linux.tar.gz
-          artifacts/UnvisualKode-macOS/UnvisualKode-macOS.zip
           artifacts/UnvisualKode-Windows/UnvisualKode-Windows.zip
         generate_release_notes: true
         draft: false
