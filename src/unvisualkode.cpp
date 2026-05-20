@@ -72,7 +72,7 @@ void UnvisualKode::handleArguments()
     // argument at index 1 is program's path
 
     if (arguments.size() == 1) {
-        // we've 0 arguments to work with
+        // we've 0 arguments to work with, so creating an empty file
         m_filesManager->newFile();
     }
     else if (arguments.size() == 2) {
